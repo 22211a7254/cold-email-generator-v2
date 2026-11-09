@@ -1,1 +1,1 @@
-streamlitlangchainlangchain_groqchromadbpandas  
+streamlitlangchainlangchain-groqlangchain-communitychromadbpandaspython-dotenvrequestsbeautifulsoup4  

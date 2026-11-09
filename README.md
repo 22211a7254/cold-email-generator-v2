@@ -1,287 +1,342 @@
-# Cold Email Generator using LLM
+# 🚀 AI Cold Email Generator | Generative AI & LLM Application
 
-An AI-powered cold email generation pipeline that uses **Groq, LangChain, ChromaDB, and Python** to analyze a job posting, identify relevant skills, retrieve matching portfolio links, and generate a personalized B2B cold email.
+An AI-powered application that analyzes job descriptions, identifies relevant skills, retrieves matching portfolio projects using semantic search, and generates personalized professional cold emails.
 
-## 🎯 Project Goal
+Built using **Python, Generative AI, LangChain, Groq GPT-OSS-120B, ChromaDB, and Streamlit**.
 
-The goal of this project is to automate part of the business-development process. Instead of manually reading a job posting and finding relevant portfolio projects, the pipeline extracts important information from the job posting, searches a portfolio using semantic similarity, and uses an LLM to generate a personalized cold email.
+## 📌 Project Overview
 
-## 🔄 How the Project Works
+The AI Cold Email Generator automates the process of creating personalized professional cold emails based on job requirements and relevant portfolio information.
 
-The current implementation follows a sequential pipeline:
+Users can enter a job posting URL or manually paste a job description. The application analyzes the content using a Large Language Model (LLM), extracts structured job information, searches for matching portfolio projects, and generates a professional cold email.
 
-```text
-Job URL
-   ↓
-WebBaseLoader
-   ↓
-Job Page Text
-   ↓
-Groq LLM
-   ↓
-Structured Job Information
-   ↓
-ChromaDB Semantic Search
-   ↓
-Relevant Portfolio Links
-   ↓
-Groq LLM
-   ↓
-Personalized Cold Email
-```
+The project demonstrates how LLMs, prompt engineering, vector databases, and semantic search can be integrated into an end-to-end Generative AI application.
 
-## 🧠 Main Components
+## 🎯 Project Objectives
 
-### 1. Job Page Extraction
+- Automate job description analysis.
+- Extract important job requirements using an LLM.
+- Match job skills with relevant portfolio projects.
+- Retrieve portfolio links using semantic search.
+- Generate personalized professional cold emails.
+- Provide an interactive interface for reviewing, editing, and downloading emails.
 
-The project uses LangChain's `WebBaseLoader` to fetch the job page and convert the webpage into text.
-
-The current notebook uses a job URL as a fixed input.
-
-```python
-loader = WebBaseLoader(job_url)
-page_data = loader.load().pop().page_content
-```
-
-The resulting text is passed to the LLM for further processing.
-
-### 2. Job Information Extraction
-
-The scraped text is given to a Groq-hosted Llama model through LangChain.
-
-The LLM is instructed to extract:
-
-* Role
-* Experience
-* Skills
-* Job description
-
-The response is then parsed into Python data using `JsonOutputParser`.
-
-Example structure:
+## 🔄 Application Workflow
 
 ```text
-{
-    "role": "Junior Data Scientist",
-    "experience": "0 year(s)",
-    "skills": [
-        "Data Analytics",
-        "Data Science",
-        "Python",
-        "SQL"
-    ],
-    "description": "..."
-}
+       Job Posting URL
+              |
+              v
+     Web Page Extraction
+       (Requests / BS4)
+              |
+              v
+      Job Description Text
+              |
+              v
+       LangChain Pipeline
+              |
+              v
+       Groq GPT-OSS-120B
+              |
+              v
+     Structured Job Details
+       (Role, Skills, etc.)
+              |
+              v
+       Portfolio CSV Data
+              |
+              v
+        ChromaDB Search
+              |
+              v
+     Relevant Portfolio Links
+              |
+              v
+       LangChain Prompt
+              |
+              v
+       Groq GPT-OSS-120B
+              |
+              v
+    Personalized Cold Email
+              |
+              v
+       Streamlit Interface
+              |
+              v
+       Review / Edit / Download
 ```
+
+## ⚙️ Key Features
+
+### 1. Job Description Extraction
+
+- Accepts job posting URLs.
+- Extracts webpage content using Python, Requests, and BeautifulSoup.
+- Supports manually pasting job descriptions when automatic extraction is unavailable.
+
+### 2. LLM-Based Job Analysis
+
+Integrates LangChain with Groq's GPT-OSS-120B model to analyze job descriptions and identify:
+
+- Job role
+- Required experience
+- Technical skills
+- Job description and requirements
+
+Structured output is used for the next stages of the pipeline.
 
 ### 3. Portfolio Management
 
-The project contains a portfolio CSV with technology stacks and corresponding links.
+Uses a CSV file to maintain portfolio information, including:
 
-Example:
+- Project technology stacks
+- Relevant project links
 
-```text
-Techstack                    Links
-Python, Machine Learning     portfolio-link
-React, Node.js               portfolio-link
-TensorFlow, ML               portfolio-link
-```
-
-Pandas is used to load the portfolio data.
+Pandas is used to load and process portfolio information.
 
 ### 4. Semantic Portfolio Search
 
-ChromaDB is used as the vector database.
+ChromaDB is integrated as the vector database.
 
-Portfolio technology-stack information is stored as documents along with the corresponding links as metadata.
+The application uses semantic search to retrieve portfolio projects relevant to the skills extracted from the job description.
 
-When job skills are extracted, they are used as queries against the ChromaDB collection to find semantically related portfolio information.
+This helps connect job requirements with suitable portfolio examples.
 
-This helps connect the requirements of a job with relevant technical work from the portfolio.
+### 5. Personalized Cold Email Generation
 
-### 5. Cold Email Generation
+The application passes extracted job details and retrieved portfolio links to the Groq LLM.
 
-The extracted job information and retrieved portfolio links are passed to another LLM prompt.
+The generated email includes:
 
-The LLM is instructed to generate a cold email from the perspective of **Mohan, a Business Development Executive at AtliQ**.
+- Subject line
+- Professional greeting
+- Understanding of the hiring requirements
+- Relevant capabilities
+- Matching portfolio links
+- Professional closing
 
-The generated email contains:
+The current prompt generates B2B business outreach emails from the perspective of Mohan, Business Development Executive at AtliQ.
 
-* A suitable subject
-* Greeting
-* Understanding of the hiring requirement
-* AtliQ's relevant capabilities
-* Relevant portfolio links
-* Professional closing
+### 6. Interactive Streamlit Interface
+
+- Simple and user-friendly interface.
+- Job URL and manual description input.
+- Job information and portfolio matching.
+- Generated email preview.
+- Email editing functionality.
+- Download generated email as a text file.
+
+## 🧠 LLM Architecture
+
+The application uses two primary LLM operations.
+
+**Call 1: Job Information Extraction**
+
+```text
+Job Description
+      |
+      v
+LangChain Prompt
+      |
+      v
+Groq GPT-OSS-120B
+      |
+      v
+Structured Job Information
+```
+
+**Call 2: Cold Email Generation**
+
+```text
+Extracted Job Details
+          +
+Retrieved Portfolio Links
+          |
+          v
+    LangChain Prompt
+          |
+          v
+  Groq GPT-OSS-120B
+          |
+          v
+ Personalized Cold Email
+```
+
+The same configured LLM model is used for both operations.
+
+## 🔍 Retrieval and Semantic Search
+
+The portfolio retrieval workflow follows these stages:
+
+```text
+Portfolio CSV
+      |
+      v
+Technology Stack Data
+      |
+      v
+ChromaDB Collection
+      |
+      v
+Semantic Similarity Search
+      |
+      v
+Relevant Portfolio Results
+      |
+      v
+LLM Context for Email Generation
+```
+
+The retrieved portfolio information is incorporated into the email-generation prompt. This represents a simple retrieval-augmented, RAG-style workflow.
 
 ## 🛠️ Technology Stack
 
-* **Python** – Core programming language
-* **LangChain** – LLM orchestration and prompt pipelines
-* **Groq** – LLM inference
-* **Llama 3 70B** – Language model used in the original implementation
-* **ChromaDB** – Vector database for portfolio retrieval
-* **Pandas** – Portfolio data processing
-* **Jupyter Notebook** – Development and experimentation environment
+| Category | Technologies |
+|---|---|
+| Programming Language | Python |
+| Generative AI | Groq GPT-OSS-120B |
+| LLM Framework | LangChain |
+| Vector Database | ChromaDB |
+| Frontend | Streamlit |
+| Data Processing | Pandas |
+| Web Extraction | Requests, BeautifulSoup |
+| Development | VS Code, Jupyter Notebook |
+| Version Control | Git, GitHub |
 
 ## 📂 Project Structure
 
 ```text
-cold-email-generator/
+cold-email-generator-v2/
 │
-├── cold Email generator (1).ipynb
+├── app.py
 ├── main.py
-├── chromadb.ipynb
-├── Langchain.ipynb
+├── requirements.txt
+├── README.md
+│
 ├── resource/
 │   └── my_portfolio.csv
-├── README.md
-└── requirements.txt
+│
+├── chromadb.ipynb
+├── Langchain.ipynb
+├── cold Email generator (1).ipynb
+│
+├── .gitignore
+└── .env                 # Local environment file; not committed
 ```
 
-### Main Files
+Note: `vectorstore/` may be created locally when the application runs. It is excluded from Git if configured in `.gitignore`.
 
-**`cold Email generator (1).ipynb`**
+## 🚀 Installation and Setup
 
-Contains the main end-to-end pipeline for job extraction, portfolio retrieval, and email generation.
+### Prerequisites
 
-**`main.py`**
+- Python 3.10 or later
+- Git
+- Groq API key
 
-Python export of the notebook cells.
+### Step 1: Clone the Repository
 
-**`resource/my_portfolio.csv`**
+```bash
+git clone https://github.com/22211a7254/cold-email-generator-v2.git
+cd cold-email-generator-v2
+```
 
-Contains portfolio technology stacks and associated links.
+### Step 2: Create a Virtual Environment
 
-**`chromadb.ipynb`**
+```bash
+python -m venv venv
+```
 
-A separate experiment used to understand ChromaDB document storage, metadata, querying, and similarity search.
+Activate it on Windows:
 
-**`Langchain.ipynb`**
+```powershell
+.\venv\Scripts\Activate.ps1
+```
 
-A separate experiment used to test the Groq LLM through LangChain.
+### Step 3: Install Dependencies
 
-## 🔑 LLM Pipeline
+```bash
+pip install -r requirements.txt
+```
 
-The project uses two main LLM calls.
+### Step 4: Configure Environment Variables
 
-### Call 1 — Job Extraction
+Create a `.env` file in the project root directory.
+
+Add your own Groq API key:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Never upload your API key to GitHub.
+
+### Step 5: Run the Application
+
+```bash
+streamlit run app.py
+```
+
+The application will open in your browser, usually at:
 
 ```text
-Scraped Job Page
-       ↓
-Prompt Template
-       ↓
-Groq LLM
-       ↓
-JSON Response
-       ↓
-JsonOutputParser
-       ↓
-Structured Job Data
+http://localhost:8501
 ```
 
-### Call 2 — Email Generation
+## 🔐 Environment and Security
 
-```text
-Job Information
-       +
-Retrieved Portfolio Links
-       ↓
-Prompt Template
-       ↓
-Groq LLM
-       ↓
-Personalized Cold Email
-```
-
-The same LLM instance is reused for both tasks.
-
-## 🔍 Vector Search
-
-ChromaDB is used to perform semantic retrieval over portfolio technology stacks.
-
-The basic process is:
-
-```text
-Portfolio Tech Stack
-        ↓
-Embedding
-        ↓
-Vector Database
-        ↓
-Job Skill Query
-        ↓
-Similarity Search
-        ↓
-Relevant Portfolio Results
-```
-
-The project uses ChromaDB's default embedding behavior rather than explicitly configuring an embedding model in the main generator code.
-
-## ⚙️ Current Implementation
-
-The current version is primarily a **linear LLM pipeline**, rather than a fully autonomous AI agent.
-
-The execution follows a predefined sequence:
-
-```text
-Scrape → Extract → Parse → Retrieve → Generate
-```
-
-There is no autonomous tool selection or agent-based decision loop in the current implementation.
+- API credentials are loaded from environment variables.
+- The `.env` file must remain local.
+- Virtual environments and generated database files should not be committed.
+- Never expose API keys in source code, notebooks, screenshots, or public repositories.
 
 ## ⚠️ Current Limitations
 
-This project is currently a prototype and has several areas that can be improved:
+- Job-page extraction depends on website accessibility and page structure.
+- Some websites may block automated scraping.
+- LLM-generated output may require manual review.
+- Portfolio matching depends on the quality of the available project descriptions and technology-stack data.
+- Retrieval relevance and email quality are not yet evaluated through a formal automated testing framework.
+- The application generates email drafts; it does not automatically send emails.
+- The project is a sequential LLM pipeline, not a fully autonomous AI agent.
 
-* Job URL is currently provided directly in the notebook.
-* There is no dedicated web UI in the current implementation.
-* Job-page scraping can depend on the structure and accessibility of the website.
-* LLM-generated JSON requires reliable validation.
-* Portfolio retrieval can be improved with better query construction and retrieval evaluation.
-* The vector database should be managed carefully to avoid stale or unrelated records.
-* There is no automated evaluation of email quality or retrieval relevance.
-* The generated email is currently printed as output rather than automatically sent.
+## 🚀 Future Enhancements
 
-## 🚀 Future Improvements
+- Support multiple job postings and job platforms.
+- Improve structured output validation and error handling.
+- Experiment with hybrid keyword and vector search.
+- Evaluate portfolio retrieval relevance.
+- Introduce automated email-quality evaluation.
+- Add logging, monitoring, and LLM usage tracking.
+- Explore agent-based workflows and tool calling.
+- Integrate an email service for sending user-approved messages.
 
-Possible improvements include:
+## 📚 Key Concepts and Learning Outcomes
 
-* Add a Streamlit interface for entering job URLs.
-* Support multiple job postings.
-* Improve structured LLM output validation.
-* Use hybrid keyword + vector search.
-* Add retrieval evaluation and ranking.
-* Add email quality evaluation.
-* Add retry and error-handling mechanisms.
-* Integrate an email service for sending approved emails.
-* Explore agent-based architecture where dynamic tool selection is actually useful.
-* Add monitoring and observability for LLM calls and retrieval quality.
+Through this project, I gained practical experience with:
 
-## 📚 What I Learned
+- Large Language Model integration.
+- Generative AI application development.
+- LangChain prompt engineering and orchestration.
+- Structured information extraction.
+- Web scraping and text processing.
+- Vector databases and semantic search.
+- Retrieval-augmented generation concepts.
+- Building interactive applications using Streamlit.
+- Integrating multiple AI components into an end-to-end workflow.
 
-Through this project, I practiced:
+I also explored the difference between a fixed LLM pipeline and an autonomous AI agent, understanding when each architecture is appropriate.
 
-* Working with LLM APIs
-* LangChain prompt pipelines
-* Structured output parsing
-* Web-page text extraction
-* Vector databases
-* Semantic search
-* Portfolio-to-job matching
-* Prompt engineering
-* Building an end-to-end AI workflow
+## 👩‍💻 Author
 
-The project also helped me understand an important distinction between a **fixed LLM pipeline and an autonomous AI agent**, and the importance of evaluating retrieval quality rather than assuming that semantic search always produces relevant results.
+**Samala Laxmi Prasanna**
 
-## 👨‍💻 Project Learning Focus
+B.Tech – Artificial Intelligence and Data Science
 
-The next stage of this project is focused on understanding and evaluating the existing architecture rather than simply adding more features. In particular, the areas of interest are:
+**Areas of Interest:** Artificial Intelligence, Machine Learning, Generative AI, LLM Applications, and Data Science.
 
-* RAG and retrieval quality
-* LLM evaluation
-* Structured outputs
-* Agent architectures
-* Tool calling
-* Modern AI development workflows
+**GitHub:** https://github.com/22211a7254
+
+---
